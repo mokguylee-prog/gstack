@@ -1379,10 +1379,10 @@ document.getElementById('conn-reconnect').addEventListener('click', () => {
 });
 
 document.getElementById('conn-copy').addEventListener('click', () => {
-  navigator.clipboard.writeText('/connect-chrome').then(() => {
+  navigator.clipboard.writeText('/open-gstack-browser').then(() => {
     const btn = document.getElementById('conn-copy');
     btn.textContent = 'copied!';
-    setTimeout(() => { btn.textContent = '/connect-chrome'; }, 2000);
+    setTimeout(() => { btn.textContent = '/open-gstack-browser'; }, 2000);
   });
 });
 
