@@ -242,9 +242,12 @@ async function askClaude(queueEntry: any): Promise<void> {
       env: {
         ...process.env,
         BROWSE_STATE_FILE: stateFile || '',
-        // Connect to the existing headed browse server instead of launching a new one.
-        // Without this, the child claude starts a headless browser on a random port.
+        // Connect to the existing headed browse server, never start a new one.
+        // BROWSE_PORT tells the CLI which port to check.
+        // BROWSE_NO_AUTOSTART prevents spawning an invisible headless browser
+        // if the headed server is down — fail fast with a clear error instead.
         BROWSE_PORT: process.env.BROWSE_PORT || '34567',
+        BROWSE_NO_AUTOSTART: '1',
         // Pin this agent to its tab — prevents cross-tab interference
         // when multiple agents run simultaneously
         BROWSE_TAB: String(tid),
