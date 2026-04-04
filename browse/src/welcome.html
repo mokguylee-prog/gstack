@@ -213,25 +213,14 @@
 </div>
 
 <script>
-// Hide sidebar prompt when the gstack extension content script fires
+// Hide sidebar prompt ONLY when the sidebar is actually opened.
+// The content script dispatches 'gstack-extension-ready' when it receives
+// a 'sidebarOpened' message from the side panel (via background.js).
+// This means the arrow stays visible until the user actually opens the sidebar.
 document.addEventListener('gstack-extension-ready', () => {
   const prompt = document.getElementById('sidebar-prompt');
   if (prompt) prompt.classList.add('hidden');
 });
-// Fallback: also check for the status pill DOM element
-function checkPill() {
-  if (document.getElementById('gstack-status-pill')) {
-    const prompt = document.getElementById('sidebar-prompt');
-    if (prompt) prompt.classList.add('hidden');
-    return true;
-  }
-  return false;
-}
-let checks = 0;
-const interval = setInterval(() => {
-  if (checkPill() || ++checks > 15) clearInterval(interval);
-}, 2000);
-checkPill();
 </script>
 </body>
 </html>

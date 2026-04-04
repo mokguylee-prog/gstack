@@ -1352,6 +1352,9 @@ function updateConnection(url, token) {
     document.getElementById('footer-port').textContent = `:${port}`;
     setConnState('connected');
     setActionButtonsEnabled(true);
+    // Tell the active tab's content script the sidebar is open — this hides
+    // the welcome page arrow hint. Only fires on actual sidebar connection.
+    chrome.runtime.sendMessage({ type: 'sidebarOpened' }).catch(() => {});
     connectSSE();
     connectInspectorSSE();
     if (chatPollInterval) clearInterval(chatPollInterval);

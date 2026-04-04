@@ -286,7 +286,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   const ALLOWED_TYPES = new Set([
     'getPort', 'setPort', 'getServerUrl', 'fetchRefs',
-    'openSidePanel', 'command', 'sidebar-command',
+    'openSidePanel', 'sidebarOpened', 'command', 'sidebar-command',
     // Inspector message types
     'startInspector', 'stopInspector', 'elementPicked', 'pickerCancelled',
     'applyStyle', 'toggleClass', 'injectCSS', 'resetAll',
@@ -329,6 +329,20 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         console.warn('[gstack bg] Failed to open side panel:', err.message);
       });
     }
+    return;
+  }
+
+  // Sidebar opened — tell active tab's content script so the welcome page
+  // can hide its arrow hint. Only fires when the sidebar actually connects.
+  if (msg.type === 'sidebarOpened') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tabId = tabs?.[0]?.id;
+      if (tabId) {
+        chrome.tabs.sendMessage(tabId, { type: 'sidebarOpened' }).catch(() => {
+          // Expected: tab may not have content script
+        });
+      }
+    });
     return;
   }
 
