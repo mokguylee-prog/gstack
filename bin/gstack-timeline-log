@@ -32,3 +32,14 @@ if ! printf '%s' "$INPUT" | bun -e "const j=JSON.parse(await Bun.stdin.text()); 
 fi
 
 echo "$INPUT" >> "$GSTACK_HOME/projects/$SLUG/timeline.jsonl"
+
+# Activity index: write to weekly rollup file for cross-runtime diarization
+# Only log "completed" events to the activity index (not "started")
+EVENT_TYPE=$(printf '%s' "$INPUT" | bun -e "const j=JSON.parse(await Bun.stdin.text()); console.log(j.event||'')" 2>/dev/null) || true
+if [ "$EVENT_TYPE" = "completed" ]; then
+  ACTIVITY_DIR="$GSTACK_HOME/activity"
+  mkdir -p "$ACTIVITY_DIR"
+  # ISO week number: YYYY-WNN
+  WEEK_FILE="$ACTIVITY_DIR/activity-$(date +%G-W%V).jsonl"
+  echo "$INPUT" >> "$WEEK_FILE"
+fi
